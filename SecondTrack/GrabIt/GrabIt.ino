@@ -1,99 +1,49 @@
-// Motor Driver Pins
-const int MOTOR_A1 = 11;
-const int MOTOR_A2 = 10;
-const int MOTOR_B1 = 6;
-const int MOTOR_B2 = 5;
-
-// Gripper Servo Pin
-const int GRIPPER_SERVO = 9;
-
-// Rotation Sensors
-const int SENSOR_R1 = 8;
-const int SENSOR_R2 = 7;
-
-// Servo positions
-#define GRIPPER_OPEN 1600
-#define GRIPPER_CLOSED 1000
-
-int currentPulse = GRIPPER_OPEN;  // Start with the gripper open
+//Include custom library files
+#include <C:\School\NHL_Stenden_PHP_Docker_Env-0.4 Group IT1D\app\public\BattleBots-IT1G\SecondTrack\Libraries\PinConnections.h>
+#include <C:\School\NHL_Stenden_PHP_Docker_Env-0.4 Group IT1D\app\public\BattleBots-IT1G\SecondTrack\Libraries\Movement.h>
+#include <C:\School\NHL_Stenden_PHP_Docker_Env-0.4 Group IT1D\app\public\BattleBots-IT1G\SecondTrack\Libraries\Gripper.h>
 
 void setup()
-{
-    pinMode(MOTOR_A1, OUTPUT);
-    pinMode(MOTOR_A2, OUTPUT);
-    pinMode(MOTOR_B1, OUTPUT);
-    pinMode(MOTOR_B2, OUTPUT);
-    
-    pinMode(GRIPPER_SERVO, OUTPUT);
-    
-    pinMode(SENSOR_R1, INPUT);
-    pinMode(SENSOR_R2, INPUT);
+{   
+    // Initialize the inputs and outputs
+    pinMode(BLUETOOTH_TRANSMIT, OUTPUT);
+    pinMode(NEOPIXEL_PIN, OUTPUT);
+    pinMode(MOTOR_A1_LEFT_FORWARD, OUTPUT);
+    pinMode(MOTOR_A2_LEFT_BACKWARDS, OUTPUT);
+    pinMode(MOTOR_B1_RIGHT_BACKWARDS, OUTPUT);
+    pinMode(MOTOR_B2_RIGHT_FORWARD, OUTPUT);
+    pinMode(SONAR_SENSOR_TRIGGER, OUTPUT);
+    pinMode(SONAR_SENSOR_ECHO, INPUT);
 
-    Serial.begin(9600);
+    // Set the initial motor states to HIGH
+    digitalWrite(MOTOR_A1_LEFT_FORWARD, HIGH);
+    digitalWrite(MOTOR_A2_LEFT_BACKWARDS, HIGH);
+    digitalWrite(MOTOR_B1_RIGHT_BACKWARDS, HIGH);
+    digitalWrite(MOTOR_B2_RIGHT_FORWARD, HIGH);
 }
 
 void loop()
 {
-    // Move forward for 2 seconds at 50% speed
-    moveForward(2000);
-    stopMotors();
-    delay(2000);
-    
-    // Close the gripper and keep it engaged
-    currentPulse = GRIPPER_CLOSED;
-    delay(2000);
+    unsigned long currentMillis = millis(); // Get the current time in milliseconds
 
-    // Move forward for another 2 seconds at 50% speed
-    moveForward(2000);
-    
-    // Stop
-    stopMotors();
-
-    // Keep the gripper engaged indefinitely
-    while (true)
+    // Execute different actions based on the time passed
+    if (currentMillis - _lastTime < 1000)
     {
-        gripper(currentPulse);
+        gripperSetup(); // Initialize the gripper(opened)
     }
-}
-
-// Move forward for a specified time (milliseconds)
-void moveForward(int timeMs)
-{
-    unsigned long startTime = millis();
+    else if (currentMillis - _lastTime >= 1000 && currentMillis - _lastTime < 1500)
+    {
+        driveForward(); // Move forward for 0.5s
+    }
+    else if (currentMillis - _lastTime >= 1500 && currentMillis - _lastTime < 2500)
+    {
+        driveStop(); // Stop the robot
+        closeGripper(); // Close the gripper
+    }
+    else if (currentMillis - _lastTime >= 2500 && currentMillis - _lastTime < 50000)
+    {
+        driveForward(); // Continue moving forward 
+        closeGripper(); //while keeping the gripper closed
+    }
     
-    while (millis() - startTime < timeMs)
-    {
-        digitalWrite(MOTOR_A1, HIGH);  // Forward
-        digitalWrite(MOTOR_A2, LOW);
-        digitalWrite(MOTOR_B1, LOW);  // Forward
-        digitalWrite(MOTOR_B2, HIGH);
-
-        gripper(currentPulse);  // Keep the gripper updated
-    }
 }
-
-// Stop the motors
-void stopMotors()
-{
-    digitalWrite(MOTOR_A1, LOW);
-    digitalWrite(MOTOR_A2, LOW);
-    digitalWrite(MOTOR_B1, LOW);
-    digitalWrite(MOTOR_B2, LOW);
-}
-
-// Keeps the gripper engaged
-void gripper(int pulse)
-{
-    static unsigned long timer = 0;
-    static int lastPulse = GRIPPER_OPEN;
-
-    if (millis() - timer >= 20)
-    {
-        digitalWrite(GRIPPER_SERVO, HIGH);
-        delayMicroseconds(pulse);
-        digitalWrite(GRIPPER_SERVO, LOW);
-        
-        timer = millis();
-    }
-}
-
