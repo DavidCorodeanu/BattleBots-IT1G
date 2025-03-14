@@ -1,56 +1,65 @@
-// Define the analog pins for the line sensors
-const int SENSORS[] = {A7, A6, A5, A4, A3, A2, A1, A0};
-const int NUM_SENSORS = 8;
-
-// Define the motor pins
-const int MOTOR_A1 = 11; // Left motor forward
-const int MOTOR_A2 = 10; // Left motor backward
-const int MOTOR_B1 = 9;  // Right motor forward
-const int MOTOR_B2 = 3;  // Right motor backward
-
-// Motor speed settings
-const int BASE_SPEED = 100;
-const int MAX_SPEED = 255;
+//Include custom library files
+#include <C:\School\NHL_Stenden_PHP_Docker_Env-0.4 Group IT1D\app\public\BattleBots-IT1G\SecondTrack\Libraries\PinConnections.h>
+#include <C:\School\NHL_Stenden_PHP_Docker_Env-0.4 Group IT1D\app\public\BattleBots-IT1G\SecondTrack\Libraries\Movement.h>
+#include <C:\School\NHL_Stenden_PHP_Docker_Env-0.4 Group IT1D\app\public\BattleBots-IT1G\SecondTrack\Libraries\Gripper.h>
+#include <C:\School\NHL_Stenden_PHP_Docker_Env-0.4 Group IT1D\app\public\BattleBots-IT1G\SecondTrack\Libraries\Detection.h>
 
 void setup()
 {
-    pinMode(MOTOR_A1, OUTPUT);
-    pinMode(MOTOR_A2, OUTPUT);
-    pinMode(MOTOR_B1, OUTPUT);
-    pinMode(MOTOR_B2, OUTPUT);
+    // Initialize serial communication
     Serial.begin(9600);
+
+    // Initialize the input and outputs
+    pinMode(BLUETOOTH_TRANSMIT, OUTPUT);
+    pinMode(NEOPIXEL_PIN, OUTPUT);
+    pinMode(GRIPPER, OUTPUT);
+    pinMode(MOTOR_A1_LEFT_FORWARD, OUTPUT);
+    pinMode(MOTOR_A2_LEFT_BACKWARDS, OUTPUT);
+    pinMode(MOTOR_B1_RIGHT_BACKWARDS, OUTPUT);
+    pinMode(MOTOR_B2_RIGHT_FORWARD, OUTPUT);
+    pinMode(SONAR_SENSOR_TRIGGER, OUTPUT);
+    pinMode(SONAR_SENSOR_ECHO, INPUT);
+    declareLineSensorPins();
+
+    // Initialize the outputs
+    digitalWrite(MOTOR_A1_LEFT_FORWARD, HIGH);
+    digitalWrite(MOTOR_A2_LEFT_BACKWARDS, HIGH);
+    digitalWrite(MOTOR_B1_RIGHT_BACKWARDS, HIGH);
+    digitalWrite(MOTOR_B2_RIGHT_FORWARD, HIGH);
+    digitalWrite(GRIPPER, LOW);
 }
 
 void loop()
 {
-    int position = readLineSensors();
-    int error = position - (NUM_SENSORS / 2);
-    int turnSpeed = error * 20;
-    
-    int leftSpeed = constrain(BASE_SPEED - turnSpeed, 0, MAX_SPEED);
-    int rightSpeed = constrain(BASE_SPEED + turnSpeed, 0, MAX_SPEED);
-    
-    setMotorSpeed(leftSpeed, rightSpeed);
+    followLine();
 }
 
-int readLineSensors()
+void declareLineSensorPins()
 {
-    int weightedSum = 0;
-    int sum = 0;
-    for (int i = 0; i < NUM_SENSORS; i++)
+    /*
+    For each sensor in the array set the pin as an input
+    && is used to avoid copying the value with each iteration
+    */
+    for (auto &&sensor : LINE_SENSORS)
     {
-        int sensorValue = analogRead(SENSORS[i]);
-        sum += sensorValue;
-        weightedSum += sensorValue * i;
+        pinMode(sensor, INPUT);
     }
-    return sum == 0 ? NUM_SENSORS / 2 : weightedSum / sum;
 }
 
-void setMotorSpeed(int leftSpeed, int rightSpeed)
+void followLine() 
 {
-    analogWrite(MOTOR_A1, leftSpeed);
-    analogWrite(MOTOR_A2, 0);
-    analogWrite(MOTOR_B1, rightSpeed);
-    analogWrite(MOTOR_B2, 0);
-}
+    while (true) 
+    {
+        int leftSensor = analogRead(LINE_SENSORS[2]); // Read the left sensor value
+        int rightSensor = analogRead(LINE_SENSORS[5]); // Read the right sensor value
+        int error = leftSensor - rightSensor; // Calculate the error
+        int derivative = error - lastError; // Store the current error for next iteration
+        lastError = error; // Update lastError for the next loop iteration
+        int correction = (Kp * error) + (Kd * derivative);  // Compute the correction using proportional (Kp) and derivative (Kd) control
 
+        int leftSpeed = constrain(baseSpeed - correction, 0, 255); // Reduce left speed if turning right
+        int rightSpeed = constrain(baseSpeed + correction, 0, 255); // Increase right speed if turning right
+
+        drive(leftSpeed, 0, rightSpeed, 0); // Drive the motors with the calculated speeds
+    }
+}
