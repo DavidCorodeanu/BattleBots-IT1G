@@ -1,0 +1,54 @@
+//Pin connection
+const int RED_LED = 13; 
+const int BUTTON_1 = 10;
+const int BUTTON_2 = 9;
+
+bool _buttonState1 = false;
+bool _buttonState2 = false;
+
+void setup() {
+  pinMode(RED_LED, OUTPUT);
+  pinMode(BUTTON_1, INPUT_PULLUP);
+  pinMode(BUTTON_2, INPUT_PULLUP);
+}
+
+void loop() {
+  //select buttons
+  _buttonState1 = digitalRead(BUTTON_1);
+  _buttonState2 = digitalRead(BUTTON_2);
+ 
+  //Button1 to blink fast and button2 to slow, while button is not pressed blink normal
+  if (_buttonState1 == LOW ) {
+    blinkFast ();
+  } 
+  else if (_buttonState2 == LOW) {
+    blinkSlow();
+  }
+  else {
+    blinkNormal();
+  }
+}
+
+//Blink faster
+void blinkFast () {
+    digitalWrite(RED_LED, LOW);
+    delay(100);
+    digitalWrite(RED_LED, HIGH);
+    delay(100);  
+}
+
+//Blink slower
+void blinkSlow () {
+    digitalWrite(RED_LED, LOW);
+    delay(3000);
+    digitalWrite(RED_LED, HIGH);
+    delay(3000);
+}
+
+//Blink normal
+void blinkNormal() {
+    digitalWrite(RED_LED, LOW);
+    delay(1000);
+    digitalWrite(RED_LED, HIGH);
+    delay(1000);
+}
