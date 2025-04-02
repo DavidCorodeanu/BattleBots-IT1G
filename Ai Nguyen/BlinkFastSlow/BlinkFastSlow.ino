@@ -1,4 +1,4 @@
-//declare the components
+//Pin connection
 const int RED_LED = 13; 
 const int BUTTON_1 = 10;
 const int BUTTON_2 = 9;
