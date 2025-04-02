@@ -1,8 +1,8 @@
 // Motor Pins
-const int                   MOTOR_B_FORWARD = 11;   // Left Forward
-const int                   MOTOR_B_BACKWARD = 10;   // Left Reverse
-const int                   MOTOR_A_FORWARD = 5;  // Right Forward
-const int                   MOTOR_A_BACKWARD = 6;   // Right Reverse
+const int                   MOTOR_A1_FORWARD = 11;   // Left Forward
+const int                   MOTOR_A2_BACKWARD = 10;   // Left Reverse
+const int                   MOTOR_B2_FORWARD = 5;  // Right Forward
+const int                   MOTOR_B1_BACKWARD = 6;   // Right Reverse
 int                         baseSpeed = 225;
 
 //Rotation Sensors

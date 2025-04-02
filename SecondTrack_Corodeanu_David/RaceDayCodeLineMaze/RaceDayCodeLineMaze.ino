@@ -14,14 +14,14 @@ void setup()
     NeoPixel.setBrightness(40);
 
     // Set Motor Pins
-    pinMode(MOTOR_B_FORWARD, OUTPUT);
-    pinMode(MOTOR_B_BACKWARD, OUTPUT);
-    pinMode(MOTOR_A_FORWARD, OUTPUT);
-    pinMode(MOTOR_A_BACKWARD, OUTPUT);
-    digitalWrite(MOTOR_B_FORWARD, LOW);
-    digitalWrite(MOTOR_B_BACKWARD, LOW);
-    digitalWrite(MOTOR_A_FORWARD, LOW);
-    digitalWrite(MOTOR_A_BACKWARD, LOW);
+    pinMode(MOTOR_A1_FORWARD, OUTPUT);
+    pinMode(MOTOR_A2_BACKWARD, OUTPUT);
+    pinMode(MOTOR_B2_FORWARD, OUTPUT);
+    pinMode(MOTOR_B1_BACKWARD, OUTPUT);
+    digitalWrite(MOTOR_A1_FORWARD, LOW);
+    digitalWrite(MOTOR_A2_BACKWARD, LOW);
+    digitalWrite(MOTOR_B2_FORWARD, LOW);
+    digitalWrite(MOTOR_B1_BACKWARD, LOW);
     pinMode(TRIG, OUTPUT);
     pinMode(ECHO, INPUT);
 
