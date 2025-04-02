@@ -62,7 +62,7 @@ void loop()
         // If obstacle detected within 12cm, turn around
         if (distance < 15)
         {
-            turn180(225, 225);
+            turn180(255, 255);
             return;  // Skip the rest of the loop to start turning
         }
     }
@@ -127,7 +127,7 @@ void loop()
     if (sensorsCalibrated && !gameStarted && conePickedUp)
     {
         // Start the game by turning left for 90 milliseconds
-        turnLeftMillis(90);
+        turnLeftMillis(105);
         if (robotState != FOLLOW_LINE) return; // Ensure the robot is in the FOLLOW_LINE state before proceeding
         gameStarted = true;
     }
@@ -145,7 +145,7 @@ void loop()
                 break;
 
             case LEFT_LINE:
-                turnLeftMillis(80);
+                turnLeftMillis(105);
                 break;
 
             case NO_LINE:

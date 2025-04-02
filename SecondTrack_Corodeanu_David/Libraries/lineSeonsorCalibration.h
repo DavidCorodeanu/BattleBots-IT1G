@@ -50,5 +50,5 @@ void calibrateSensors()
         }
     }
 
-    moveForwardPID(145, 160, true, false);
+    moveForwardPID(200, 200, true, false);
 }

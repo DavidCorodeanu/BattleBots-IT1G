@@ -3,11 +3,11 @@ const int                   MOTOR_A1_FORWARD = 11;   // Left Forward
 const int                   MOTOR_A2_BACKWARD = 10;   // Left Reverse
 const int                   MOTOR_B2_FORWARD = 5;  // Right Forward
 const int                   MOTOR_B1_BACKWARD = 6;   // Right Reverse
-int                         baseSpeed = 225;
+int                         baseSpeed = 255;
 
 //Rotation Sensors
-const int                   MOTOR_R1 = 2;
-const int                   MOTOR_R2 = 3;
+const int                   MOTOR_R1 = 3;
+const int                   MOTOR_R2 = 2;
 
 const int                   ISR_INTERVAL = 20;  // interval of 20 milli seconds to update counter by interupt
 
@@ -60,8 +60,8 @@ RobotState                  robotState = FOLLOW_LINE;
 LinePosition                linePosition = CENTER_LINE;
 
 // Encoder Pulse Counters
-volatile signed int         _leftTicks = 0;
-volatile signed int         _rightTicks = 3;
+volatile signed int         _leftTicks = 5;
+volatile signed int         _rightTicks = 0;
 
 // Conditions
 bool                        coneInSquare = true;
