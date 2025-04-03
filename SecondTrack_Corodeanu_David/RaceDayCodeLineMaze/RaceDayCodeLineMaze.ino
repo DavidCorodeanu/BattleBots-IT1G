@@ -97,7 +97,7 @@ void loop()
             {
                 detectionStartTime = millis();  // Start timing
             }
-            else if (millis() - detectionStartTime >= 350)
+            else if (millis() - detectionStartTime >= 300)
             {
                 robotDetected = true;
                 if (robotDetected)
@@ -132,7 +132,7 @@ void loop()
         gameStarted = true;
     }
 
-    // Check if the game has started and if the game has not ended yet
+    // Check if the game is in progress
     if (gameStarted && !gameEnded)
     {
         // Get the line position and take action based on it

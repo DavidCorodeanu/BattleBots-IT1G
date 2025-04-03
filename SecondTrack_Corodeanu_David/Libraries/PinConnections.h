@@ -3,16 +3,16 @@ const int                   MOTOR_A1_FORWARD = 11;   // Left Forward
 const int                   MOTOR_A2_BACKWARD = 10;   // Left Reverse
 const int                   MOTOR_B2_FORWARD = 5;  // Right Forward
 const int                   MOTOR_B1_BACKWARD = 6;   // Right Reverse
-int                         baseSpeed = 255;
+int                         baseSpeed = 255; // Base speed
 
-//Rotation Sensors
+// Rotation Sensors
 const int                   MOTOR_R1 = 3;
 const int                   MOTOR_R2 = 2;
 
 const int                   ISR_INTERVAL = 20;  // interval of 20 milli seconds to update counter by interupt
 
 
-//Servo Control
+// Servo Control
 const int                   GRIPPER_OPEN = 1800;
 const int                   GRIPPER_CLOSE = 990;
 const int                   SERVO = 9;
@@ -20,7 +20,7 @@ const int                   PULSE = 2000;
 int                         previousTime = 0;
 const int                   GRIPPER_INTERVAL = 20;
 
-//Line Sensors
+// Line Sensors
 const int                   NUM_SENSORS = 8;                                               // Number of sensors
 int                         sensorPins[NUM_SENSORS] = { A0, A1, A2, A3, A4, A5, A6, A7 };  // Sensor pin mapping
 int                         sensorValues[NUM_SENSORS];                                     // Array to store sensor readings
@@ -28,17 +28,17 @@ int                         sensorMin[NUM_SENSORS];
 int                         sensorMax[NUM_SENSORS];
 int                         sensorThreshold[NUM_SENSORS];                                  // Array to store thresholds for each sensor
 
-//Line Positions
+// Line Positions
 bool                        leftTurn;
 bool                        rightTurn;
 bool                        tJunctionOrBase;
 bool                        deadEnd;
 
-//Measurements
+// Measurements
 const float                 WHEEL_CIRCUMFERENCE = 20.4;
 const int                   PULSE_PER_REVOLUTION = 20;
 const float                 DISTANCE_BETWEEN_WHEELS = 22.75;
-static const int            DISTANCE_FROM_BASE_TO_CONE = 55; // Distance is in ticks
+static const int            DISTANCE_FROM_BASE_TO_CONE = 55;
 const int                   TARGET = DISTANCE_FROM_BASE_TO_CONE;
 
 const int                   TRIG = 13;
@@ -59,7 +59,7 @@ enum LinePosition           {T_JUNCTION, LEFT_LINE, RIGHT_LINE, NO_LINE, CENTER_
 RobotState                  robotState = FOLLOW_LINE;
 LinePosition                linePosition = CENTER_LINE;
 
-// Encoder Pulse Counters
+// Pulse Counters
 volatile signed int         _leftTicks = 5;
 volatile signed int         _rightTicks = 0;
 

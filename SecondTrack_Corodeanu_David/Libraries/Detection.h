@@ -37,7 +37,7 @@ void endGame()
         {
             openGripper(); // Open gripper
             setDriveBackwardColor();
-            moveBackward(200, 200);  // Move backward while dropping the cone
+            moveBackward(255, 255);  // Move backward while dropping the cone
         }
         
         // Stop the robot after driving backwards
