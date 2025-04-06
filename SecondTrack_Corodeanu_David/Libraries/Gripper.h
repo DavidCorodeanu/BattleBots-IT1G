@@ -1,8 +1,8 @@
 void gripper(int pulse)
  {
-     static unsigned long timer;
-     static int lastPulse;
-     if (millis() > timer)
+     static unsigned long timer; // Time tracker for servo pulse interval
+     static int lastPulse; // Stores the last valid pulse value
+     if (millis() > timer) // Only update the servo every 20ms (standard servo refresh rate)
      {
          if (pulse > 0)
          {

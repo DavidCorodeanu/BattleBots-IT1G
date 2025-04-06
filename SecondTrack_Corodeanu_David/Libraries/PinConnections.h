@@ -1,50 +1,59 @@
-// Motor Pins
+// ======================= MOTOR PINS ============================
+
 const int                   MOTOR_A1_FORWARD = 11;   // Left Forward
 const int                   MOTOR_A2_BACKWARD = 10;   // Left Reverse
 const int                   MOTOR_B2_FORWARD = 5;  // Right Forward
 const int                   MOTOR_B1_BACKWARD = 6;   // Right Reverse
 int                         baseSpeed = 255; // Base speed
 
-// Rotation Sensors
+// ======================= ENCODER PINS ==========================
+
 const int                   MOTOR_R1 = 3;
 const int                   MOTOR_R2 = 2;
 
 const int                   ISR_INTERVAL = 20;  // interval of 20 milli seconds to update counter by interupt
 
 
-// Servo Control
-const int                   GRIPPER_OPEN = 1800;
-const int                   GRIPPER_CLOSE = 990;
+// ======================= SERVO CONTROL =========================
+
+const int                   GRIPPER_OPEN = 1800; // Pulse width for opened gripper
+const int                   GRIPPER_CLOSE = 990; // Pulse width for closed gripper
 const int                   SERVO = 9;
-const int                   PULSE = 2000;
+const int                   PULSE = 2000; // Pulse duration for servo movement
 int                         previousTime = 0;
 const int                   GRIPPER_INTERVAL = 20;
 
-// Line Sensors
+// ======================= LINE SENSOR CONFIG ====================
+
 const int                   NUM_SENSORS = 8;                                               // Number of sensors
 int                         sensorPins[NUM_SENSORS] = { A0, A1, A2, A3, A4, A5, A6, A7 };  // Sensor pin mapping
-int                         sensorValues[NUM_SENSORS];                                     // Array to store sensor readings
-int                         sensorMin[NUM_SENSORS];
-int                         sensorMax[NUM_SENSORS];
-int                         sensorThreshold[NUM_SENSORS];                                  // Array to store thresholds for each sensor
+int                         sensorValues[NUM_SENSORS];                                     // Current readings from line sensors
+int                         sensorMin[NUM_SENSORS];                                        // Minimum calibration values for each sensor
+int                         sensorMax[NUM_SENSORS];                                        // Maximum calibration values for each sensor
+int                         sensorThreshold[NUM_SENSORS];                                  // Threshold value for detecting line (black vs white)
 
-// Line Positions
+// ======================= LINE POSITION FLAGS ===================
+
 bool                        leftTurn;
 bool                        rightTurn;
 bool                        tJunctionOrBase;
 bool                        deadEnd;
 
-// Measurements
-const float                 WHEEL_CIRCUMFERENCE = 20.4;
-const int                   PULSE_PER_REVOLUTION = 20;
-const float                 DISTANCE_BETWEEN_WHEELS = 22.75;
-static const int            DISTANCE_FROM_BASE_TO_CONE = 55;
-const int                   TARGET = DISTANCE_FROM_BASE_TO_CONE;
+// ======================= MEASUREMENT CONSTANTS =================
+
+const float                 WHEEL_CIRCUMFERENCE = 20.4;           // Circumference of one wheel in cm
+const int                   PULSE_PER_REVOLUTION = 20;            // Number of encoder pulses per wheel revolution
+const float                 DISTANCE_BETWEEN_WHEELS = 22.75;      // Distance between the two wheels in cm
+static const int            DISTANCE_FROM_BASE_TO_CONE = 55;      // Distance from base to cone (target for navigation)
+const int                   TARGET = DISTANCE_FROM_BASE_TO_CONE;  // Target distance to travel
+
+// ======================= ULTRASONIC SENSOR =====================
 
 const int                   TRIG = 13;
 const int                   ECHO = 12;
 
-// Define NeoPixel
+// ======================= NEOPIXEL CONFIGURATION ===============
+
 const int                   NEOPIXEL_PIN = 4;
 const int                   NUM_PIXELS = 4;
 const int                   PIXEL_BOTTOM_LEFT = 0;
@@ -53,17 +62,23 @@ const int                   PIXEL_TOP_RIGHT = 2;
 const int                   PIXEL_TOP_LEFT = 3;
 Adafruit_NeoPixel           NeoPixel = Adafruit_NeoPixel(NUM_PIXELS, NEOPIXEL_PIN, NEO_RGB + NEO_KHZ800);
 
+// ======================= ENUMS ================================
+
 enum RobotState             {FOLLOW_LINE, TURNING, TURNING_LEFT, TURNING_RIGHT, TURNING_AROUND, CHECKING_FOR_PATH_AHEAD};
 enum LinePosition           {T_JUNCTION, LEFT_LINE, RIGHT_LINE, NO_LINE, CENTER_LINE};
 
-RobotState                  robotState = FOLLOW_LINE;
-LinePosition                linePosition = CENTER_LINE;
+// ======================= STATE TRACKERS =======================
 
-// Pulse Counters
-volatile signed int         _leftTicks = 5;
-volatile signed int         _rightTicks = 0;
+RobotState                  robotState = FOLLOW_LINE;    // Current robot movement state
+LinePosition                linePosition = CENTER_LINE;  // Current line position
 
-// Conditions
+// ======================= ENCODER TICKS ========================
+
+volatile signed int         _leftTicks = 5;  // Pulse count for left wheel (initial offset)
+volatile signed int         _rightTicks = 0; // Pulse count for right wheel
+
+// ======================= GAME CONDITIONS ======================
+
 bool                        coneInSquare = true;
 bool                        sensorsCalibrated = false;
 bool                        conePickedUp = false;
@@ -75,26 +90,31 @@ bool                        robotDetected = false;
 bool                        blackSquareDetected = false;
 bool                        robotCalibrated = false;
 
-// Setup the minimum time to confirm a black square
+// ======================= BLACK SQUARE DETECTION ===============
+
 const int                   MIN_SQUARE_TIME = 2000;  // Minimum time in ms to confirm we're on a black square
 
-// PID Variables
-int                         error = 0, lastError = 0;
-float                       integral = 0;
-float                       derivative = 0;
+// ======================= PID CONTROL VARIABLES ================
+
+int                         error = 0, lastError = 0; // Current and last error values
+float                       integral = 0;  // Integral accumulator
+float                       derivative = 0; // Rate of change of error
 float                       Kp;  // Proportional Gain
 float                       Ki;  // Integral Gain
 float                       Kd;  // Derivative Gain
-int                         correction;
+int                         correction; // PID output correction
 
-// Robot variables
+// ======================= TURNING VARIABLES =====================
+
 int                         pulses;
 int                         angle;
 int                         radius = DISTANCE_BETWEEN_WHEELS;
 int                         turn_Circumference = 2 * 3.14 * radius;
 float                       turnDistances = 0;  // ARC of a circle
 
-// function to reset the encoder ticks
+// ======================= UTILITY FUNCTIONS =====================
+
+// Function to reset encoder tick counts
 void resetTicks()
 {
     _leftTicks = 0;

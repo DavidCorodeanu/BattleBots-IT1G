@@ -1,11 +1,11 @@
 // Function to measure distance using ultrasonic sensor
 float measureDistance()
 {
-    // Clear the TRIG pin
+    // Clear the TRIG pin to start a clean signal
     digitalWrite(TRIG, LOW);
     delayMicroseconds(2);
 
-    // Set the TRIG pin HIGH for 10 microseconds
+    // Send a 10 microsecond pulse to trigger the ultrasonic sensor
     digitalWrite(TRIG, HIGH);
     delayMicroseconds(10);
     digitalWrite(TRIG, LOW);
@@ -25,13 +25,12 @@ float measureDistance()
     return distance;
 }
 
-void endGame()
+void endGame() // Function to end the game after dropping the cone
 {
-    // Only end game if we're not already ending it
+    // Only execute this block once if the game hasn't ended already
     if (!gameEnded)
     {
-        // Stop the robot
-        stopMotors();
+        stopMotors(); // Stop the robot
         long startTime = millis();
         while (millis() < startTime + 1000)
         {
@@ -40,11 +39,11 @@ void endGame()
             moveBackward(255, 255);  // Move backward while dropping the cone
         }
         
-        // Stop the robot after driving backwards
+        // After backing up, stop the robot completely
         stopMotors();
         setDriveStopColor();
 
-        // Set flags to indicate game is over
+        // Set flags to indicate the cone has been dropped and the game is over
         coneDroppedOff = true;
         gameEnded = true;
 

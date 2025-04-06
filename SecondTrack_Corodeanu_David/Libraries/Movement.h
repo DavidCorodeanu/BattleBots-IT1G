@@ -1,4 +1,4 @@
-void stopMotors()
+void stopMotors() // Stops all motor movement
 {
     analogWrite(MOTOR_A1_FORWARD, 0);    
     analogWrite(MOTOR_A2_BACKWARD, 0);
@@ -6,7 +6,7 @@ void stopMotors()
     analogWrite(MOTOR_B1_BACKWARD, 0);
 }
 
-void leftEncoderISR()
+void leftEncoderISR() // Interrupt Service Routine for left encoder, increments left tick count with debounce interval
 {
     static unsigned long timer;
     if (millis() > timer)
@@ -16,7 +16,7 @@ void leftEncoderISR()
     }
 }
 
-void rightEncoderISR()
+void rightEncoderISR() // Interrupt Service Routine for right encoder, increments right tick count with debounce interval
 {
     static unsigned long timer;
     if (millis() > timer)
@@ -26,7 +26,7 @@ void rightEncoderISR()
     }
 }
 
-void moveForward(int _rightSpeed, int _leftSpeed)
+void moveForward(int _rightSpeed, int _leftSpeed) // Moves robot forward
 {
     if (!gameEnded)
     {
@@ -35,7 +35,7 @@ void moveForward(int _rightSpeed, int _leftSpeed)
     }
 }
 
-void moveBackward(int _rightSpeed, int _leftSpeed)
+void moveBackward(int _rightSpeed, int _leftSpeed) // Moves robot backward
 {
     if (!gameEnded)
     {
@@ -44,7 +44,7 @@ void moveBackward(int _rightSpeed, int _leftSpeed)
     }
 }
 
-void turn180(int _leftSpeed, int _rightSpeed)
+void turn180(int _leftSpeed, int _rightSpeed) // Performs a 180-degree turn in place
 {
     analogWrite(MOTOR_A2_BACKWARD, 0);
     analogWrite(MOTOR_B2_FORWARD, 0);
@@ -52,7 +52,7 @@ void turn180(int _leftSpeed, int _rightSpeed)
     analogWrite(MOTOR_B1_BACKWARD, _leftSpeed);
 }
 
-void turnLeftMillis(int angle)
+void turnLeftMillis(int angle) // Turns left using encoder-based control for a specified angle
 {
     static unsigned long lastCheck = 0;
     const unsigned long checkInterval = 5;
@@ -62,7 +62,7 @@ void turnLeftMillis(int angle)
     {
         resetTicks();
         targetPulses = 0;
-        float turnDistance = (angle / 360.0) * turn_Circumference;
+        float turnDistance = (angle / 360.0) * turn_Circumference; // Calculate distance and corresponding pulse count for the given angle
         targetPulses = (turnDistance / WHEEL_CIRCUMFERENCE) * PULSE_PER_REVOLUTION;
 
         stopMotors();
@@ -73,20 +73,20 @@ void turnLeftMillis(int angle)
         motionComplete = false;
     }
 
-    if (robotState == TURNING_LEFT)
+    if (robotState == TURNING_LEFT) // Continuously check encoder until turn is complete
     {
         lastCheck = millis();
         if (_rightTicks >= targetPulses)
         {
             stopMotors();
-            robotState = FOLLOW_LINE;  // Unlock state after turn is complete
+            robotState = FOLLOW_LINE;  // Unlock state after turn is complete and return to "FOLLOW_LINE" state
             motionComplete = true;
             linePosition = CENTER_LINE;
         }
     }
 }
 
-void turnRightMillis(int angle)
+void turnRightMillis(int angle) // Turns right using encoder-based control for a specified angle
 {
     static unsigned long lastCheck = 0;
     const unsigned long checkInterval = 5;
@@ -96,7 +96,7 @@ void turnRightMillis(int angle)
     {
         resetTicks();  // Reset left encoder ticks
         targetPulses = 0;
-        float turnDistance = (angle / 360.0) * turn_Circumference;
+        float turnDistance = (angle / 360.0) * turn_Circumference; // Calculate distance and corresponding pulse count for the given angle
         targetPulses = (turnDistance / WHEEL_CIRCUMFERENCE) * PULSE_PER_REVOLUTION;
         stopMotors();
 
@@ -106,7 +106,7 @@ void turnRightMillis(int angle)
         motionComplete = false;
     }
 
-    if (robotState == TURNING_RIGHT && millis() - lastCheck >= checkInterval)
+    if (robotState == TURNING_RIGHT && millis() - lastCheck >= checkInterval) // Continuously check encoder and sensors until turn is complete
     {
         lastCheck = millis();
         readSensors();
@@ -120,7 +120,7 @@ void turnRightMillis(int angle)
     }
 }
 
-void turnAroundMillis()
+void turnAroundMillis() // Performs a 180-degree turnaround based on sensor detection
 {
     static unsigned long lastCheck = 0;
     const unsigned long checkInterval = 5;
@@ -140,7 +140,7 @@ void turnAroundMillis()
         motionComplete = false;
     }
 
-    if (robotState == TURNING_AROUND)
+    if (robotState == TURNING_AROUND) // Check outermost sensors for re-aligning with line
     {
         sensorValues[0] = analogRead(sensorPins[0]);
         if (sensorValues[0] > sensorThreshold[0] || sensorValues[4] > sensorThreshold[4])
@@ -153,7 +153,7 @@ void turnAroundMillis()
     }
 }
 
-void moveForwardPID(int _leftSpeed, int _rightSpeed, bool withOutLine, bool lineTracking)
+void moveForwardPID(int _leftSpeed, int _rightSpeed, bool withOutLine, bool lineTracking) // Moves robot forward using PID control, either encoder-based or sensor-based
 {
     if (withOutLine)
     {

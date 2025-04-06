@@ -1,4 +1,5 @@
 #include <Adafruit_NeoPixel.h>
+// Include all custom libraries - these can be found in the Libraries folder
 #include <C:\School\NHL_Stenden_PHP_Docker_Env-0.4 Group IT1D\app\public\BattleBots-IT1G\SecondTrack_Corodeanu_David\Libraries\PinConnections.h>
 #include <C:\School\NHL_Stenden_PHP_Docker_Env-0.4 Group IT1D\app\public\BattleBots-IT1G\SecondTrack_Corodeanu_David\Libraries\LineSensor.h>
 #include <C:\School\NHL_Stenden_PHP_Docker_Env-0.4 Group IT1D\app\public\BattleBots-IT1G\SecondTrack_Corodeanu_David\Libraries\Gripper.h>
@@ -13,7 +14,7 @@ void setup()
     NeoPixel.begin();
     NeoPixel.setBrightness(40);
 
-    // Set Motor Pins
+    // Set motor control pins as output and stop motors
     pinMode(MOTOR_A1_FORWARD, OUTPUT);
     pinMode(MOTOR_A2_BACKWARD, OUTPUT);
     pinMode(MOTOR_B2_FORWARD, OUTPUT);
@@ -25,18 +26,18 @@ void setup()
     pinMode(TRIG, OUTPUT);
     pinMode(ECHO, INPUT);
 
-    // Attach Interrupts for Encoders
+    // Attach Interruptions for Encoders
     attachInterrupt(digitalPinToInterrupt(MOTOR_R1), leftEncoderISR, CHANGE);
     attachInterrupt(digitalPinToInterrupt(MOTOR_R2), rightEncoderISR, CHANGE);
 
-    //SERVO
+    //Set Servo
     pinMode(SERVO, OUTPUT);
     digitalWrite(SERVO, LOW);
 }
 
 void loop()
 {
-    if(!robotCalibrated)
+    if(!robotCalibrated) // Indicate standby status using LEDs if the robot is not yet calibrated
     {
         setStandByColor();
     }
@@ -54,12 +55,12 @@ void loop()
         return;  // Skip the rest of the loop
     }
 
-    // Check for obstacles (only when following line, not during turns)
+    // If robot is following the line, check for obstacles ahead
     if (robotState == FOLLOW_LINE && gameStarted && !gameEnded)
     {
         float distance = measureDistance();
 
-        // If obstacle detected within 12cm, turn around
+        // If obstacle detected within 15 cm, turn around
         if (distance < 15)
         {
             turn180(255, 255);
@@ -67,7 +68,7 @@ void loop()
         }
     }
 
-    // Check if the gripper should be opened or closed based on the conePickUp state
+    // Control the gripper based on whether the cone has been picked up
     if (conePickedUp)
     {
         if (currentTime - previousTime >= GRIPPER_INTERVAL)
@@ -88,7 +89,7 @@ void loop()
     // Check if the cone is in the square and if the robot is not calibrated
     if (coneInSquare && !sensorsCalibrated)
     {
-        // Start calibrating the line sensors when a robot is detected for 200ms
+        // Start calibration if a robot is detected for at least 300ms
         static unsigned long detectionStartTime = 0;
 
         if (measureDistance() < 30)
@@ -123,45 +124,43 @@ void loop()
         return;
     }
 
-    // Check if the sensors are calibrated and if the game has not started yet
+    // Start the game after calibration and picking up the cone
     if (sensorsCalibrated && !gameStarted && conePickedUp)
     {
-        // Start the game by turning left for 90 milliseconds
-        turnLeftMillis(105);
+        turnLeftMillis(105); // Initial turn to begin movement
         if (robotState != FOLLOW_LINE) return; // Ensure the robot is in the FOLLOW_LINE state before proceeding
         gameStarted = true;
     }
 
-    // Check if the game is in progress
+    // If game is ongoing, follow the line based on sensor input
     if (gameStarted && !gameEnded)
     {
-        // Get the line position and take action based on it
-        getLinePosition();
+        getLinePosition(); // Update current line position
 
         switch (linePosition)
         {
             case T_JUNCTION:
-                turnLeftMillis(90);
+                turnLeftMillis(90); // Handle T-junction by turning left
                 break;
 
             case LEFT_LINE:
-                turnLeftMillis(105);
+                turnLeftMillis(105); // Turn left slightly to correct path
                 break;
 
             case NO_LINE:
-                turnAroundMillis();
+                turnAroundMillis(); // If robot has lost the line, turn around
                 break;
 
             case RIGHT_LINE:
                 robotState = FOLLOW_LINE;
-                moveForwardPID(baseSpeed, baseSpeed, false, true);
+                moveForwardPID(baseSpeed, baseSpeed, false, true);  // Slight right correction
                 break;
 
             case CENTER_LINE:
                 if (robotState == FOLLOW_LINE)
                 {
-                    moveForwardPID(baseSpeed, baseSpeed, false, true);
-                    setDriveForwardColor();
+                    moveForwardPID(baseSpeed, baseSpeed, false, true); // Continue forward
+                    setDriveForwardColor(); // Update LED color
                 }
                 break;
 

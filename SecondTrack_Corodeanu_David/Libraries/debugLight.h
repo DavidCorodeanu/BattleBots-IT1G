@@ -1,4 +1,4 @@
-void setStandByColor()
+void setStandByColor() // Sets the NeoPixels to a blinking red pattern for standby mode
 {
     static unsigned long previousMillis = 0;
     static bool isOn = false;
@@ -31,7 +31,7 @@ void setStandByColor()
     }
 }
 
-void setDriveForwardColor()
+void setDriveForwardColor() // Indicates driving forward with green top LEDs
 {
     NeoPixel.setPixelColor(PIXEL_TOP_LEFT, 0, 255, 0);
     NeoPixel.setPixelColor(PIXEL_TOP_RIGHT, 0, 255, 0);
@@ -40,7 +40,7 @@ void setDriveForwardColor()
     NeoPixel.show();
 }
 
-void setDriveBackwardColor()
+void setDriveBackwardColor() // Indicates driving backward with yellow bottom LEDs
 {
     NeoPixel.setPixelColor(PIXEL_TOP_LEFT, 0, 0, 0);
     NeoPixel.setPixelColor(PIXEL_TOP_RIGHT, 0, 0, 0);
@@ -49,7 +49,7 @@ void setDriveBackwardColor()
     NeoPixel.show();
 }
 
-void setTurnRightColor()
+void setTurnRightColor() // Indicates turning right with orange on the right side
 {
     NeoPixel.setPixelColor(PIXEL_TOP_LEFT, 0, 0, 0);
     NeoPixel.setPixelColor(PIXEL_TOP_RIGHT, 255, 150, 0);
@@ -58,7 +58,7 @@ void setTurnRightColor()
     NeoPixel.show();
 }
 
-void setTurnLeftColor()
+void setTurnLeftColor() // Indicates turning left with orange on the left side
 {
     NeoPixel.setPixelColor(PIXEL_TOP_LEFT, 255, 150, 0);
     NeoPixel.setPixelColor(PIXEL_TOP_RIGHT, 0, 0, 0);
@@ -67,7 +67,7 @@ void setTurnLeftColor()
     NeoPixel.show();
 }
 
-void setTurnAroundColor()
+void setTurnAroundColor() // Indicates turning around with all orange LEDs
 {
     NeoPixel.setPixelColor(PIXEL_TOP_LEFT, 255, 150, 0);
     NeoPixel.setPixelColor(PIXEL_TOP_RIGHT, 255, 150, 0);
@@ -76,7 +76,7 @@ void setTurnAroundColor()
     NeoPixel.show();
 }
 
-void setDriveStopColor()
+void setDriveStopColor() // Indicates stop with all red LEDs
 {
     NeoPixel.setPixelColor(PIXEL_TOP_LEFT, 255, 0, 0);
     NeoPixel.setPixelColor(PIXEL_TOP_RIGHT, 255, 0, 0);
@@ -85,7 +85,7 @@ void setDriveStopColor()
     NeoPixel.show();
 }
 
-void setCalibrateColor()
+void setCalibrateColor() // Indicates calibration mode with cyan color on all LEDs
 {
     NeoPixel.setPixelColor(PIXEL_TOP_LEFT, 0, 255, 255);
     NeoPixel.setPixelColor(PIXEL_TOP_RIGHT, 0, 255, 255);
